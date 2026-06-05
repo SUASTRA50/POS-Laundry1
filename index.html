@@ -93,42 +93,66 @@ th, td {
   color:#555;
 }
 
-/* =========================================
-   KODE PENGATURAN KHUSUS UNTUK PRINT STRUK 
-   ========================================= */
+/* STYLE KUSTOM KOTAK PERINGATAN (MODAL NO-ALERT) */
+.custom-modal {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+}
+.modal-content {
+  background-color: white;
+  margin: 35% auto;
+  padding: 20px;
+  border-radius: 8px;
+  width: 80%;
+  max-width: 320px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.modal-text {
+  font-size: 16px;
+  margin-bottom: 15px;
+  color: #333;
+}
+.modal-btn {
+  background: #007bff;
+  color: white;
+  width: auto;
+  padding: 8px 25px;
+  display: inline-block;
+  margin: 0;
+}
+
+/* KODE KHUSUS UNTUK PRINT STRUK */
 @media print {
-  /* Sembunyikan semua tombol navigasi dan input pengisian data */
-  button, select, input {
+  button, select, input, .custom-modal {
     display: none !important;
   }
-
-  /* Sembunyikan kolom paling terakhir (Kolom Tombol Hapus / X) */
-  th:last-child, 
-  td:last-child {
+  th:last-child, td:last-child {
     display: none !important;
   }
-
-  /* Bersihkan dekorasi latar agar struk pas di kertas thermal */
   body {
     background: white !important;
     padding: 0 !important;
     margin: 0 !important;
   }
-
   .container {
     max-width: 100% !important;
     box-shadow: none !important;
     padding: 0 !important;
     border-radius: 0 !important;
   }
-
   table {
     width: 100% !important;
     margin-top: 10px !important;
   }
-  
   th, td {
-    border: 1px solid #000 !important; /* Garis struk hitam tegas saat diprint */
+    border: 1px solid #000 !important;
     padding: 6px !important;
   }
 }
@@ -137,8 +161,14 @@ th, td {
 
 <body>
 
-<div class="container">
+<div id="myModal" class="custom-modal">
+  <div class="modal-content">
+    <p id="modalMsg" class="modal-text"></p>
+    <button class="modal-btn" onclick="closeModal()">OK</button>
+  </div>
+</div>
 
+<div class="container">
 <div class="header">
   <h3>Laundry POS</h3>
   <div class="small" id="datetime"></div>
@@ -172,7 +202,8 @@ th, td {
 <th>Type</th>
 <th>Qty</th>
 <th>Total</th>
-<th></th> </tr>
+<th></th>
+</tr>
 </thead>
 <tbody></tbody>
 </table>
@@ -181,11 +212,10 @@ th, td {
 <p class="total">Subtotal: Rp <span id="total">0</span></p>
 <p class="total">Tax (21%): Rp <span id="tax">0</span></p>
 <p class="total">Grand Total: Rp <span id="grand">0</span></p>
-
 </div>
 
 <script>
-// LOGIKA KASIR (PRICE LIST)
+// DAFTAR HARGA LAUNDRY
 const prices = {
 "Trouser": {L:127000,W:135000,P:104000},
 "Shirt (Long Sleeve)": {L:127000,W:135000,P:104000},
@@ -217,7 +247,7 @@ const prices = {
 let grandTotal = 0;
 let totalPieces = 0;
 
-// SISTEM WAKTU JAM NYATA
+// MENJALANKAN WAKTU JAM NYATA
 function updateDateTime(){
   let now = new Date();
   document.getElementById('datetime').innerText = now.toLocaleString('id-ID');
@@ -225,10 +255,9 @@ function updateDateTime(){
 setInterval(updateDateTime, 1000);
 updateDateTime();
 
-// DAFTAR PRODUK DROPDOWN
+// POPULATE OPTION DROPDOWN ITEM
 let itemSelect = document.getElementById('item');
 itemSelect.innerHTML = '<option value="">-- Pilih Item --</option>';
-
 for(let item in prices){
   let opt = document.createElement("option");
   opt.value = item;
@@ -236,7 +265,17 @@ for(let item in prices){
   itemSelect.appendChild(opt);
 }
 
-// FUNGSI TAMBAH DATA KE TABEL
+// FUNGSI UNTUK MEMUNCULKAN PESAN KUSTOM (PENGGANTI ALERT BROWSER)
+function tampilPesan(teks) {
+  document.getElementById('modalMsg').innerText = teks;
+  document.getElementById('myModal').style.display = 'block';
+}
+
+function closeModal() {
+  document.getElementById('myModal').style.display = 'none';
+}
+
+// TAMBAH DATA KE TABEL KASIR
 function tambah(){
   let item = document.getElementById('item').value;
   let service = document.getElementById('service').value;
@@ -247,12 +286,12 @@ function tambah(){
   let typeName = typeSelect.options[typeSelect.selectedIndex].text;
 
   if(!item || !qty || isNaN(qty)){
-    alert("Pilih item dan isi qty");
+    tampilPesan("Pilih item dan isi qty");
     return;
   }
 
   if(!prices[item][service]){
-    alert("Service tidak tersedia untuk item ini");
+    tampilPesan("Service tidak tersedia untuk item ini");
     return;
   }
 
@@ -281,7 +320,6 @@ function tambah(){
   document.getElementById('qty').value = '';
 }
 
-// FUNGSI HAPUS BARIS TERTENTU
 function hapusRow(btn, total, qty){
   btn.parentElement.parentElement.remove();
   grandTotal -= total;
@@ -289,13 +327,12 @@ function hapusRow(btn, total, qty){
   updateTotal();
 }
 
-// PERHITUNGAN TOTAL & TAX (PEMBULATAN KE RIBUAN)
 function updateTotal(){
   let subtotal = grandTotal;
   let tax = subtotal * 0.21;
   let grand = subtotal + tax;
-  
-  // Perhitungan pembulatan matematika ke ribuan terdekat
+
+  // PEMBULATAN KE RIBUAN TERDEKAT
   grand = Math.round(grand / 1000) * 1000;
 
   document.getElementById('pieces').innerText = totalPieces;
@@ -304,12 +341,10 @@ function updateTotal(){
   document.getElementById('grand').innerText = grand.toLocaleString('id-ID');
 }
 
-// FUNGSI PRINT STRUK BELANJA
 function printStruk(){
   window.print();
 }
 
-// FUNGSI RESET DATA SEMUA KASIR
 function resetAll(){
   document.querySelector("#table tbody").innerHTML = '';
   grandTotal = 0;
@@ -317,18 +352,18 @@ function resetAll(){
   updateTotal();
 }
 
-// SHORTCUT ENTER KEY UNTUK MEMPERCEPAT TAMBAH DATA
+// SHORTCUT BUTTON ENTER
 document.addEventListener("keydown", function(e){
   if(e.key === "Enter"){
     tambah();
   }
 });
 
-// OTOMATISASI SERVICE WORKER PWA (STABILITAS AKSES OFFLINE)
+// SERVICE WORKER STRATEGI OFFLINE CACHE PWA
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     const swCode = `
-      const CACHE_NAME = 'laundry-pos-v6';
+      const CACHE_NAME = 'laundry-pos-v7';
       self.addEventListener('install', e => {
         e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(['/'])));
       });
@@ -342,6 +377,5 @@ if ('serviceWorker' in navigator) {
   });
 }
 </script>
-
 </body>
 </html>
