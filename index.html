@@ -209,7 +209,7 @@ th, td {
 </table>
 
 <p class="total">Total Pieces: <span id="pieces">0</span></p>
-<p class="total">Subtotal: Rp <span id="total">0</span></p>
+<p class="total">Total Entry: <span id="entries">0</span></p> <p class="total">Subtotal: Rp <span id="total">0</span></p>
 <p class="total">Tax (21%): Rp <span id="tax">0</span></p>
 <p class="total">Grand Total: Rp <span id="grand">0</span></p>
 </div>
@@ -246,6 +246,7 @@ const prices = {
 
 let grandTotal = 0;
 let totalPieces = 0;
+let totalEntries = 0; // VARIABEL UNTUK MENGHITUNG BARIS INPUT
 
 // MENJALANKAN WAKTU JAM NYATA
 function updateDateTime(){
@@ -300,6 +301,7 @@ function tambah(){
 
   grandTotal += total;
   totalPieces += qty;
+  totalEntries += 1; // BERTAMBAH 1 BARIS SAAT SUKSES INPUT
 
   let tbody = document.querySelector("#table tbody");
   let tr = document.createElement("tr");
@@ -324,6 +326,7 @@ function hapusRow(btn, total, qty){
   btn.parentElement.parentElement.remove();
   grandTotal -= total;
   totalPieces -= qty;
+  totalEntries -= 1; // BERKURANG 1 BARIS KETIKA DIHAPUS (X)
   updateTotal();
 }
 
@@ -336,6 +339,7 @@ function updateTotal(){
   grand = Math.round(grand / 1000) * 1000;
 
   document.getElementById('pieces').innerText = totalPieces;
+  document.getElementById('entries').innerText = totalEntries; // KONEKSI KE HTML
   document.getElementById('total').innerText = subtotal.toLocaleString('id-ID');
   document.getElementById('tax').innerText = Math.round(tax).toLocaleString('id-ID');
   document.getElementById('grand').innerText = grand.toLocaleString('id-ID');
@@ -349,6 +353,7 @@ function resetAll(){
   document.querySelector("#table tbody").innerHTML = '';
   grandTotal = 0;
   totalPieces = 0;
+  totalEntries = 0; // RESET TOTAL BARIS KEMBALI KE NOL
   updateTotal();
 }
 
@@ -363,7 +368,7 @@ document.addEventListener("keydown", function(e){
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     const swCode = `
-      const CACHE_NAME = 'laundry-pos-v7';
+      const CACHE_NAME = 'laundry-pos-v8';
       self.addEventListener('install', e => {
         e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(['/'])));
       });
