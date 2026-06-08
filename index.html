@@ -1,1 +1,383 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Laundry POS</title>
 
+<meta name="theme-color" content="#7bb2f4">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="LaundryPOS">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background:#f2f2f2;
+  padding:10px;
+  -webkit-user-select: none;
+}
+
+.container {
+  max-width:420px;
+  margin:auto;
+  background:white;
+  padding:15px;
+  border-radius:10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+
+select, input, button {
+  width:100%;
+  padding:12px;
+  margin:6px 0;
+  font-size:16px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+button {
+  background: #007bff;
+  color: white;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:active {
+  background: #0056b3;
+}
+
+table {
+  width:100%;
+  margin-top:15px;
+  border-collapse: collapse;
+}
+
+th, td {
+  border:1px solid #ddd;
+  padding:8px;
+  text-align:center;
+  font-size:13px;
+}
+
+.total {
+  font-weight:bold;
+  margin: 8px 0;
+  font-size: 15px;
+}
+
+.delete-btn {
+  background:red;
+  color:white;
+  border:none;
+  padding:6px 12px;
+  cursor:pointer;
+  border-radius: 4px;
+  width: auto;
+}
+
+.header {
+  text-align:center;
+  margin-bottom:10px;
+}
+
+.small {
+  font-size:12px;
+  color:#555;
+}
+
+/* STYLE KUSTOM KOTAK PERINGATAN (MODAL NO-ALERT) */
+.custom-modal {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+}
+.modal-content {
+  background-color: white;
+  margin: 35% auto;
+  padding: 20px;
+  border-radius: 8px;
+  width: 80%;
+  max-width: 320px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.modal-text {
+  font-size: 16px;
+  margin-bottom: 15px;
+  color: #333;
+}
+.modal-btn {
+  background: #007bff;
+  color: white;
+  width: auto;
+  padding: 8px 25px;
+  display: inline-block;
+  margin: 0;
+}
+
+/* KODE KHUSUS UNTUK PRINT STRUK */
+@media print {
+  button, select, input, .custom-modal {
+    display: none !important;
+  }
+  th:last-child, td:last-child {
+    display: none !important;
+  }
+  body {
+    background: white !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  .container {
+    max-width: 100% !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+  }
+  table {
+    width: 100% !important;
+    margin-top: 10px !important;
+  }
+  th, td {
+    border: 1px solid #000 !important;
+    padding: 6px !important;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div id="myModal" class="custom-modal">
+  <div class="modal-content">
+    <p id="modalMsg" class="modal-text"></p>
+    <button class="modal-btn" onclick="closeModal()">OK</button>
+  </div>
+</div>
+
+<div class="container">
+<div class="header">
+  <h3>Laundry POS</h3>
+  <div class="small" id="datetime"></div>
+</div>
+
+<select id="item"></select>
+
+<select id="service">
+  <option value="L">Laundry</option>
+  <option value="W">Wet Cleaning</option>
+  <option value="P">Pressing</option>
+</select>
+
+<input type="number" id="qty" placeholder="Qty" inputmode="numeric">
+
+<select id="type">
+  <option value="1" data-code="R">Regular</option>
+  <option value="1.5" data-code="X">Express</option>
+  <option value="0.5" data-code="K">Kids</option>
+</select>
+
+<button onclick="tambah()" style="background:#28a745;">Tambah (Enter)</button>
+<button onclick="printStruk()">Print</button>
+<button onclick="resetAll()" style="background:#dc3545;">Reset</button>
+
+<table id="table">
+<thead>
+<tr>
+<th>Item</th>
+<th>Svc</th>
+<th>Type</th>
+<th>Qty</th>
+<th>Total</th>
+<th></th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+
+<p class="total">Total Pieces: <span id="pieces">0</span></p>
+<p class="total">Total Entry: <span id="entries">0</span></p> <p class="total">Subtotal: Rp <span id="total">0</span></p>
+<p class="total">Tax (21%): Rp <span id="tax">0</span></p>
+<p class="total">Grand Total: Rp <span id="grand">0</span></p>
+</div>
+
+<script>
+// DAFTAR HARGA LAUNDRY
+const prices = {
+"Trouser": {L:127000,W:135000,P:104000},
+"Shirt (Long Sleeve)": {L:127000,W:135000,P:104000},
+"Shirt (Short Sleeve)": {L:115000,W:116000,P:104000},
+"Sport Shirt": {L:105000,W:105000,P:93000},
+"Under pants": {L:64000},
+"Undershirt": {L:64000},
+"Necktie": {W:80000,P:70000},
+"Blouse": {L:127000,W:138000,P:93000},
+"Dress": {L:127000,W:200000,P:121000},
+"Skirt": {L:110000,W:150000,P:93000},
+"Slack": {L:127000,W:139000,P:104000},
+"Brassieres": {L:64000},
+"Panties": {L:64000},
+"Suit (2pcs)": {W:230000,P:195500},
+"Sweater": {L:110000,W:120000,P:93000},
+"Pyjamas (2pcs)": {L:93000,W:92000,P:75000},
+"T'Shirt": {L:93000,W:100000,P:85000},
+"Socks": {L:63000},
+"Shorts": {L:81000,W:80000,P:75000},
+"Jeans": {L:127000,W:138000,P:99000},
+"Jacket": {L:130000,W:145000,P:120000},
+"Handkerchief": {L:58000},
+"Scarf/Hijab/Apron/Hat": {L:60500,W:70000,P:55000},
+"Blanket/Bath Towel": {L:110000},
+"Sarung": {L:121000,W:130000,P:110000}
+};
+
+let grandTotal = 0;
+let totalPieces = 0;
+let totalEntries = 0; // VARIABEL UNTUK MENGHITUNG BARIS INPUT
+
+// MENJALANKAN WAKTU JAM NYATA
+function updateDateTime(){
+  let now = new Date();
+  document.getElementById('datetime').innerText = now.toLocaleString('id-ID');
+}
+setInterval(updateDateTime, 1000);
+updateDateTime();
+
+// POPULATE OPTION DROPDOWN ITEM
+let itemSelect = document.getElementById('item');
+itemSelect.innerHTML = '<option value="">-- Pilih Item --</option>';
+for(let item in prices){
+  let opt = document.createElement("option");
+  opt.value = item;
+  opt.text = item;
+  itemSelect.appendChild(opt);
+}
+
+// FUNGSI UNTUK MEMUNCULKAN PESAN KUSTOM (PENGGANTI ALERT BROWSER)
+function tampilPesan(teks) {
+  document.getElementById('modalMsg').innerText = teks;
+  document.getElementById('myModal').style.display = 'block';
+}
+
+function closeModal() {
+  document.getElementById('myModal').style.display = 'none';
+}
+
+// TAMBAH DATA KE TABEL KASIR
+function tambah(){
+  let item = document.getElementById('item').value;
+  let service = document.getElementById('service').value;
+  let qty = parseInt(document.getElementById('qty').value);
+  let typeSelect = document.getElementById('type');
+
+  let multiplier = parseFloat(typeSelect.value);
+  let typeName = typeSelect.options[typeSelect.selectedIndex].text;
+
+  if(!item || !qty || isNaN(qty)){
+    tampilPesan("Pilih item dan isi qty");
+    return;
+  }
+
+  if(!prices[item][service]){
+    tampilPesan("Service tidak tersedia untuk item ini");
+    return;
+  }
+
+  let basePrice = prices[item][service];
+  let total = basePrice * qty * multiplier;
+
+  grandTotal += total;
+  totalPieces += qty;
+  totalEntries += 1; // BERTAMBAH 1 BARIS SAAT SUKSES INPUT
+
+  let tbody = document.querySelector("#table tbody");
+  let tr = document.createElement("tr");
+
+  tr.innerHTML = `
+    <td>${item}</td>
+    <td>${service}</td>
+    <td>${typeName}</td>
+    <td>${qty}</td>
+    <td>${total.toLocaleString('id-ID')}</td>
+    <td>
+      <button class="delete-btn" onclick="hapusRow(this, ${total}, ${qty})">X</button>
+    </td>
+  `;
+  tbody.appendChild(tr);
+
+  updateTotal();
+  document.getElementById('qty').value = '';
+}
+
+function hapusRow(btn, total, qty){
+  btn.parentElement.parentElement.remove();
+  grandTotal -= total;
+  totalPieces -= qty;
+  totalEntries -= 1; // BERKURANG 1 BARIS KETIKA DIHAPUS (X)
+  updateTotal();
+}
+
+function updateTotal(){
+  let subtotal = grandTotal;
+  let tax = subtotal * 0.21;
+  let grand = subtotal + tax;
+
+  // PEMBULATAN KE RIBUAN TERDEKAT
+  grand = Math.round(grand / 1000) * 1000;
+
+  document.getElementById('pieces').innerText = totalPieces;
+  document.getElementById('entries').innerText = totalEntries; // KONEKSI KE HTML
+  document.getElementById('total').innerText = subtotal.toLocaleString('id-ID');
+  document.getElementById('tax').innerText = Math.round(tax).toLocaleString('id-ID');
+  document.getElementById('grand').innerText = grand.toLocaleString('id-ID');
+}
+
+function printStruk(){
+  window.print();
+}
+
+function resetAll(){
+  document.querySelector("#table tbody").innerHTML = '';
+  grandTotal = 0;
+  totalPieces = 0;
+  totalEntries = 0; // RESET TOTAL BARIS KEMBALI KE NOL
+  updateTotal();
+}
+
+// SHORTCUT BUTTON ENTER
+document.addEventListener("keydown", function(e){
+  if(e.key === "Enter"){
+    tambah();
+  }
+});
+
+// SERVICE WORKER STRATEGI OFFLINE CACHE PWA
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    const swCode = `
+      const CACHE_NAME = 'laundry-pos-v8';
+      self.addEventListener('install', e => {
+        e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(['/'])));
+      });
+      self.addEventListener('fetch', e => {
+        e.respondWith(caches.match(e.request).then(res => res || fetch(e.request)));
+      });
+    `;
+    const blob = new Blob([swCode], { type: 'application/javascript' });
+    const swUrl = URL.createObjectURL(blob);
+    navigator.serviceWorker.register(swUrl, { scope: '/' });
+  });
+}
+</script>
+</body>
+</html>
