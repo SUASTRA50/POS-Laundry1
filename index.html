@@ -251,7 +251,11 @@ th, td {
 </select>
 
 <p class="total">Subtotal: Rp <span id="total">0</span></p>
-<p class="total" id="p-disc-row" style="color: red; display: none;">Discount Amt: -Rp <span id="discAmtText">0</span></p> <p class="total">Tax & Svc (21%): Rp <span id="tax">0</span></p>
+<p class="total" id="p-disc-row" style="color: red; display: none;">Discount Amt: -Rp <span id="discAmtText">0</span></p>
+
+<p class="total" id="p-net-row" style="display: none; border-top: 1px dashed #ccc; padding-top: 5px;">Net Total (Subtotal - Disc): Rp <span id="netTotalText">0</span></p>
+
+<p class="total">Tax & Svc (21%): Rp <span id="tax">0</span></p>
 <p class="total">Grand Total: Rp <span id="grand">0</span></p>
 </div>
 
@@ -323,7 +327,7 @@ function tambah(){
   let service = document.getElementById('service').value;
   let qty = parseInt(document.getElementById('qty').value);
   let typeSelect = document.getElementById('type');
-  let itemDiscPercent = parseInt(document.getElementById('itemDisc').value); // Ambil nilai diskon item
+  let itemDiscPercent = parseInt(document.getElementById('itemDisc').value);
 
   let multiplier = parseFloat(typeSelect.value);
   let typeName = typeSelect.options[typeSelect.selectedIndex].text;
@@ -341,7 +345,6 @@ function tambah(){
   let basePrice = prices[item][service];
   let rawTotal = basePrice * qty * multiplier;
   
-  // Terapkan Item Diskon jika ada sebelum masuk ke total tabel
   let itemDiscAmt = rawTotal * (itemDiscPercent / 100);
   let total = rawTotal - itemDiscAmt;
 
@@ -352,7 +355,6 @@ function tambah(){
   let tbody = document.querySelector("#table tbody");
   let tr = document.createElement("tr");
 
-  // Jika ada diskon item, beri penanda % di nama itemnya
   let itemDisplayText = item;
   if(itemDiscPercent > 0) {
     itemDisplayText += ` (${itemDiscPercent}%% Off)`;
@@ -372,7 +374,7 @@ function tambah(){
 
   updateTotal();
   document.getElementById('qty').value = '';
-  document.getElementById('itemDisc').value = '0'; // Reset pilihan diskon item ke 0% setelah ditambah
+  document.getElementById('itemDisc').value = '0';
 }
 
 function hapusRow(btn, total, qty){
@@ -385,13 +387,12 @@ function hapusRow(btn, total, qty){
 
 function updateTotal(){
   let subtotal = grandTotal;
-  let checkDiscPercent = parseInt(document.getElementById('checkDisc').value); // Ambil nilai Check Disc.
+  let checkDiscPercent = parseInt(document.getElementById('checkDisc').value);
   
-  // Hitung besaran potongan Check Diskon
   let checkDiscAmt = subtotal * (checkDiscPercent / 100);
   let subtotalAfterCheckDisc = subtotal - checkDiscAmt;
 
-  // Hitung pajak 21%% berdasarkan subtotal yang sudah dipotong diskon
+  // Hitung pajak 21% dari nilai setelah diskon
   let tax = subtotalAfterCheckDisc * 0.21;
   let grand = subtotalAfterCheckDisc + tax;
   
@@ -402,17 +403,20 @@ function updateTotal(){
   document.getElementById('entries').innerText = totalEntries;
   document.getElementById('total').innerText = subtotal.toLocaleString('id-ID');
 
-  // Mengatur visibilitas baris potongan diskon & sinkronisasi text cetak
   let discRow = document.getElementById('p-disc-row');
+  let netRow = document.getElementById('p-net-row');
   let pCheckDiscPrint = document.getElementById('p-checkdisc');
 
   if(checkDiscPercent > 0) {
     discRow.style.display = 'block';
+    netRow.style.display = 'block'; // Tampilkan baris Net Total
     document.getElementById('discAmtText').innerText = checkDiscAmt.toLocaleString('id-ID');
+    document.getElementById('netTotalText').innerText = subtotalAfterCheckDisc.toLocaleString('id-ID');
     pCheckDiscPrint.innerText = `Check Disc. : ${checkDiscPercent}%%`;
     pCheckDiscPrint.style.display = 'block';
   } else {
     discRow.style.display = 'none';
+    netRow.style.display = 'none'; // Sembunyikan baris Net Total jika tidak ada diskon
     pCheckDiscPrint.style.display = 'none';
   }
 
@@ -445,7 +449,7 @@ document.addEventListener("keydown", function(e){
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     const swCode = `
-      const CACHE_NAME = 'laundry-pos-v11';
+      const CACHE_NAME = 'laundry-pos-v12';
       self.addEventListener('install', e => {
         e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(['/'])));
       });
