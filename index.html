@@ -191,7 +191,7 @@ th, td {
 <div class="guest-info-block">
   <input type="text" id="roomNo" placeholder="Room No. :" oninput="syncPrintText()">
   <p id="p-room" class="print-text">Room No. : -</p>
-</div>
+  <p id="p-checkdisc" class="print-text" style="display:none;"></p> </div>
 
 <select id="item"></select>
 
@@ -207,6 +207,16 @@ th, td {
   <option value="1" data-code="R">Regular</option>
   <option value="1.5" data-code="X">Express</option>
   <option value="0.5" data-code="K">Kids</option>
+</select>
+
+<select id="itemDisc">
+  <option value="0">-- Item Disc. : 0% --</option>
+  <option value="10">Item Disc. : 10%</option>
+  <option value="15">Item Disc. : 15%</option>
+  <option value="20">Item Disc. : 20%</option>
+  <option value="25">Item Disc. : 25%</option>
+  <option value="30">Item Disc. : 30%</option>
+  <option value="50">Item Disc. : 50%</option>
 </select>
 
 <button onclick="tambah()" style="background:#28a745;">Tambah (Enter)</button>
@@ -229,8 +239,19 @@ th, td {
 
 <p class="total">Total Pieces: <span id="pieces">0</span></p>
 <p class="total">Total Entry: <span id="entries">0</span></p>
+
+<select id="checkDisc" onchange="updateTotal()" style="margin: 10px 0; font-weight: bold; border: 2px solid #007bff;">
+  <option value="0">-- Check Disc. : 0% --</option>
+  <option value="10">Check Disc. : 10%</option>
+  <option value="15">Check Disc. : 15%</option>
+  <option value="20">Check Disc. : 20%</option>
+  <option value="25">Check Disc. : 25%</option>
+  <option value="30">Check Disc. : 30%</option>
+  <option value="50">Check Disc. : 50%</option>
+</select>
+
 <p class="total">Subtotal: Rp <span id="total">0</span></p>
-<p class="total">Tax (21%): Rp <span id="tax">0</span></p>
+<p class="total" id="p-disc-row" style="color: red; display: none;">Discount Amt: -Rp <span id="discAmtText">0</span></p> <p class="total">Tax & Svc (21%): Rp <span id="tax">0</span></p>
 <p class="total">Grand Total: Rp <span id="grand">0</span></p>
 </div>
 
@@ -302,6 +323,7 @@ function tambah(){
   let service = document.getElementById('service').value;
   let qty = parseInt(document.getElementById('qty').value);
   let typeSelect = document.getElementById('type');
+  let itemDiscPercent = parseInt(document.getElementById('itemDisc').value); // Ambil nilai diskon item
 
   let multiplier = parseFloat(typeSelect.value);
   let typeName = typeSelect.options[typeSelect.selectedIndex].text;
@@ -317,7 +339,11 @@ function tambah(){
   }
 
   let basePrice = prices[item][service];
-  let total = basePrice * qty * multiplier;
+  let rawTotal = basePrice * qty * multiplier;
+  
+  // Terapkan Item Diskon jika ada sebelum masuk ke total tabel
+  let itemDiscAmt = rawTotal * (itemDiscPercent / 100);
+  let total = rawTotal - itemDiscAmt;
 
   grandTotal += total;
   totalPieces += qty;
@@ -326,8 +352,14 @@ function tambah(){
   let tbody = document.querySelector("#table tbody");
   let tr = document.createElement("tr");
 
+  // Jika ada diskon item, beri penanda % di nama itemnya
+  let itemDisplayText = item;
+  if(itemDiscPercent > 0) {
+    itemDisplayText += ` (${itemDiscPercent}%% Off)`;
+  }
+
   tr.innerHTML = `
-    <td>${item}</td>
+    <td>${itemDisplayText}</td>
     <td>${service}</td>
     <td>${typeName}</td>
     <td>${qty}</td>
@@ -340,6 +372,7 @@ function tambah(){
 
   updateTotal();
   document.getElementById('qty').value = '';
+  document.getElementById('itemDisc').value = '0'; // Reset pilihan diskon item ke 0% setelah ditambah
 }
 
 function hapusRow(btn, total, qty){
@@ -352,13 +385,37 @@ function hapusRow(btn, total, qty){
 
 function updateTotal(){
   let subtotal = grandTotal;
-  let tax = subtotal * 0.21;
-  let grand = subtotal + tax;
+  let checkDiscPercent = parseInt(document.getElementById('checkDisc').value); // Ambil nilai Check Disc.
+  
+  // Hitung besaran potongan Check Diskon
+  let checkDiscAmt = subtotal * (checkDiscPercent / 100);
+  let subtotalAfterCheckDisc = subtotal - checkDiscAmt;
+
+  // Hitung pajak 21%% berdasarkan subtotal yang sudah dipotong diskon
+  let tax = subtotalAfterCheckDisc * 0.21;
+  let grand = subtotalAfterCheckDisc + tax;
+  
+  // Pembulatan ke ribuan terdekat
   grand = Math.round(grand / 1000) * 1000;
 
   document.getElementById('pieces').innerText = totalPieces;
   document.getElementById('entries').innerText = totalEntries;
   document.getElementById('total').innerText = subtotal.toLocaleString('id-ID');
+
+  // Mengatur visibilitas baris potongan diskon & sinkronisasi text cetak
+  let discRow = document.getElementById('p-disc-row');
+  let pCheckDiscPrint = document.getElementById('p-checkdisc');
+
+  if(checkDiscPercent > 0) {
+    discRow.style.display = 'block';
+    document.getElementById('discAmtText').innerText = checkDiscAmt.toLocaleString('id-ID');
+    pCheckDiscPrint.innerText = `Check Disc. : ${checkDiscPercent}%%`;
+    pCheckDiscPrint.style.display = 'block';
+  } else {
+    discRow.style.display = 'none';
+    pCheckDiscPrint.style.display = 'none';
+  }
+
   document.getElementById('tax').innerText = Math.round(tax).toLocaleString('id-ID');
   document.getElementById('grand').innerText = grand.toLocaleString('id-ID');
 }
@@ -370,6 +427,8 @@ function printStruk(){
 function resetAll(){
   document.querySelector("#table tbody").innerHTML = '';
   document.getElementById('roomNo').value = '';
+  document.getElementById('checkDisc').value = '0';
+  document.getElementById('itemDisc').value = '0';
   syncPrintText();
   grandTotal = 0;
   totalPieces = 0;
@@ -386,7 +445,7 @@ document.addEventListener("keydown", function(e){
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     const swCode = `
-      const CACHE_NAME = 'laundry-pos-v10';
+      const CACHE_NAME = 'laundry-pos-v11';
       self.addEventListener('install', e => {
         e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(['/'])));
       });
