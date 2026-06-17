@@ -251,7 +251,7 @@ th, td {
 </select>
 
 <p class="total">Subtotal: Rp <span id="total">0</span></p>
-<p class="total" id="p-disc-row" style="color: red; display: none;">Discount Amt: -Rp <span id="discAmtText">0</span></p>
+<p class="total" id="p-disc-row" style="color: red; display: none;">Disc. Amount: -Rp <span id="discAmtText">0</span></p>
 
 <p class="total" id="p-net-row" style="display: none; border-top: 1px dashed #ccc; padding-top: 5px;">Total After Disc: Rp <span id="netTotalText">0</span></p>
 
@@ -412,7 +412,7 @@ function updateTotal(){
     netRow.style.display = 'block'; // Tampilkan baris Net Total
     document.getElementById('discAmtText').innerText = checkDiscAmt.toLocaleString('id-ID');
     document.getElementById('netTotalText').innerText = subtotalAfterCheckDisc.toLocaleString('id-ID');
-    pCheckDiscPrint.innerText = `Check Disc. : ${checkDiscPercent}%%`;
+    pCheckDiscPrint.innerText = `Check Disc. : ${checkDiscPercent}%`;
     pCheckDiscPrint.style.display = 'block';
   } else {
     discRow.style.display = 'none';
