@@ -432,27 +432,32 @@ function printStruk(){
 }
 
 function resetAll(){
+  // 1. Bersihkan baris tabel transaksi
   document.querySelector("#table tbody").innerHTML = '';
+  
+  // 2. Kosongkan kembali input nomor kamar
   document.getElementById('roomNo').value = '';
   
-  // Mengembalikan pilihan dropdown diskon ke opsi paling atas (0%)
+  // 3. Kembalikan pilihan dropdown ke opsi paling atas (0%)
   document.getElementById('checkDisc').selectedIndex = 0;
   document.getElementById('itemDisc').selectedIndex = 0;
-  
-  // Memaksa nilai value latar belakang kembali ke angka 0
   document.getElementById('checkDisc').value = '0';
   document.getElementById('itemDisc').value = '0';
   
-  // Sembunyikan elemen teks cetak struk
+  // 4. Sembunyikan elemen visual diskon di layar HP
   document.getElementById('p-checkdisc').style.display = 'none'; 
   
+  // 5. PERBAIKAN UTAMA: Kosongkan teks struk cetak agar kertas print tidak memunculkan teks lama
+  document.getElementById('p-checkdisc').innerText = ''; 
+  
+  // 6. Sinkronisasi ulang teks kamar dan jalankan hitung ulang dari nol
   syncPrintText();
   grandTotal = 0;
   totalPieces = 0;
   totalEntries = 0;
-  updateTotal(); // Sekarang saat fungsi ini dipanggil, nilai diskon dijamin sudah 0
+  updateTotal(); // Saat fungsi ini berjalan, semua data sudah dipastikan 0 bersih
 }
-
+  
 document.addEventListener("keydown", function(e){
   if(e.key === "Enter"){
     tambah();
