@@ -434,14 +434,23 @@ function printStruk(){
 function resetAll(){
   document.querySelector("#table tbody").innerHTML = '';
   document.getElementById('roomNo').value = '';
+  
+  // Mengembalikan pilihan dropdown diskon ke opsi paling atas (0%)
+  document.getElementById('checkDisc').selectedIndex = 0;
+  document.getElementById('itemDisc').selectedIndex = 0;
+  
+  // Memaksa nilai value latar belakang kembali ke angka 0
   document.getElementById('checkDisc').value = '0';
   document.getElementById('itemDisc').value = '0';
-  document.getElementById('p-checkdisc').style.display = 'none'; // Sembunyikan saat klik reset
+  
+  // Sembunyikan elemen teks cetak struk
+  document.getElementById('p-checkdisc').style.display = 'none'; 
+  
   syncPrintText();
   grandTotal = 0;
   totalPieces = 0;
   totalEntries = 0;
-  updateTotal();
+  updateTotal(); // Sekarang saat fungsi ini dipanggil, nilai diskon dijamin sudah 0
 }
 
 document.addEventListener("keydown", function(e){
