@@ -286,7 +286,7 @@ const prices = {
 "Handkerchief": {L:58000},
 "Scarf/Hijab/Apron/Hat": {L:60500,W:70000,P:55000},
 "Blanket/Bath Towel": {L:110000},
-"Sarung": {L:121000,W:130000,P:110000}
+"Sarung": {L:121000,W:130000,P:110000},
 "Open Hand Towel":{L:81000},
 "Open Bed Sheet":{L:110000},
 "Open Face Towel/Pillow Cases":{L:58000},
@@ -336,7 +336,7 @@ function closeModal() {
 function tambah(){
   let item = document.getElementById('item').value;
   let service = document.getElementById('service').value;
-  let qty = parseInt(document.getElementById('qty').value);
+  let qty = parseInt(document.getElementById('qty').value, 10);
   let typeSelect = document.getElementById('type');
   let itemDiscPercent = parseInt(document.getElementById('itemDisc').value);
 
@@ -348,7 +348,7 @@ function tambah(){
     return;
   }
 
-  if(!prices[item][service]){
+  if(!prices[item] || !prices[item][service]){
     tampilPesan("Service tidak tersedia untuk item ini");
     return;
   }
