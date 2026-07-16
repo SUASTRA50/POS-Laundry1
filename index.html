@@ -11,8 +11,6 @@
 <meta name="apple-mobile-web-app-title" content="LaundryPOS">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-<script src="prices.js"></script>
-
 <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXUpAAAACXBIWXMAAAsTAAALEwEAmpwYAAAEMklEQVR4nO2bX2hVVRzHP6eZzS03b6YWehG99CCI9CD0YvTSg9D79CD4UvTSg9D79FCD9FIEvRTB9FIEvXQhKAn9mSgI9SDoof9ubpZ7u3kz9fRwLp6Lw5m7e889d8%2B9Z3v9wGHvPed3fud3fr9zfr%2FzO%2BfMubMDVVAUfUvgEWA3sBNYCOwGFgALgZlAFzAbmAVMA8YBEZgAzoMvgaPAIeBr4CBwCHgfeBd4e6Z6fAL4C3gXeEksAm9gCHgMeBxYA3QYvS3AQWAf8EIsAGtgCHgU%2BFCsZ6YHeAlYfSZ69AEvAIuA9vOQow%2BXA6vPVM8dwN%2FAMuDAvMToA%2FYB781EtwXAMeCledgPAscwE19yBnr0AY8C98xH7lHgS7H8OZaAHuBl4JZ5yl8I7Ae%2BjQUAvAZszULmD67Yf%2B%2Bc%2FCXAn8DaLGT%2BYHqy6R6fS%2FRYwAnDuhwLwCDwI7AmA3kX3EbyWfQYiUWWANeR76uWvL70w6OAFfM9wEXzKMAi8AXwRC0CcBwYAnqzlreT9N6VpPdmIe%2BiW09scC0CfGceXmAncH8tAnAP6TqVpPcq8DkwYnBvOfD3HAXgA6An6WAtArAXWJXhXwIep7r%2BvxscH8pSAD6giDAsAnqAsQz%2FEHAHsC3pYAnwY8wEHEvI8AnwRNYCcBTpMkBvAsYcMrwLwOPU1v93A%2BsTcnwDlDu2Zf3%2FDyRk%2Bxo4YViX3RFgP7A6A3EXyJXTa9ulwF%2FAmgz9HyRk%2Bww4ZFiX%2FV3AzTF%2FK0uA74ANKfP252kdLwHvJeT%2FnoQY8Bh4xrIbXwIsA7YCnSl%2FXwA8CnyZ0vYxMJKQYwD560%2F%2BPInuI%2BByYL%2BhfWbSj8Vp%2F%2BL8O1GepzscI5Nez4H9wNfAp9R3gU%2BAX4G%2FAfsh0O0YAt4EbhwndpPhvVfK9OskfeVxuZ6eZ94692G6L7fC%2FOvclOmv9HjOsV8Z%2B61zb9PjscT4UuclY2T9NcoUqOfAn0gXn6T6tUeZfjKx987Enp6v3hLgnTkiQDp9pY2tC8BvSD7VqYfN45%2BT9FXvneQvC%2B7KDP6eM4CkN7G5fU6DzyRceymKAn9l6Ocl%2Bhreiz%2BlZfAEv13bAnp8fAcoWf3fTnHmS8u17kPlxMey60wv5uD802An9wUqO%2FAw6Q7X9z03jXg3oxjNyXpuxzX5WbA7%2BXgnAsI0%2F3S6Sutbe0bYAdp59Y6D7w36b13jWPLvU6Z%2Fidw%2B7jOqO%2FAG4ZlmToPnE6ZfvL%2By2NOfZdrwOPv4BwFCOntWb6u2v89w9ZpIAnwN063eYjucY%2BAW8bLofp2uXnc9g6OAsKkrXy76fWpI6SPhfT6Auk9O0gfeZfbe8dIezvclPoeZ%2FZP0R0Bvka2s%2Fzp8STwMfDDeG0v6%2F0fAzvHWbYn05MebZfbe7HwXWz9fyn9P%2F8fW%2BD%2BAn661uGbyGId%2FLyC%2F%2BA8%2FQE%2FWwvwC%2FgFfAL%2Bgf8X6f%2BDwP8E8AsICPkF%2FBfwnwH%2BgvAL8AtwMv4XwN0b8F8AtwD8AvAL%2BgXmF%2BAnMBPML8DJA%2FwM%2BAnMBPMLzI73A3AGeAjwM2gH8M%2F9A%2FQgR31nUAsDAAAAAElFTkSuQmCC">
 
 <link rel="manifest" href='data:application/manifest+json,{"short_name":"LaundryPOS","name":"Laundry POS System","start_url":".","display":"standalone","background_color":"#7bb2f4","theme_color":"#7bb2f4","orientation":"portrait","icons":[{"src":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXUpAAAACXBIWXMAAAsTAAALEwEAmpwYAAAEMklEQVR4nO2bX2hVVRzHP6eZzS03b6YWehG99CCI9CD0YvTSg9D79CD4UvTSg9D79FCD9FIEvRTB9FIEvXQhKAn9mSgI9SDoof9ubpZ7u3kz9fRwLp6Lw5m7e889d8%2B9Z3v9wGHvPed3fud3fr9zfr%2FzO%2BfMubMDVVAUfUvgEWA3sBNYCOwGFgALgZlAFzAbmAVMA8YBEZgAzoMvgaPAIeBr4CBwCHgfeBd4e6Z6fAL4C3gXeEksAm9gCHgMeBxYA3QYvS3AQWAf8EIsAGtgCHgU%2BFCsZ6YHeAlYfSZ69AEvAIuA9vOQow%2BXA6vPVM8dwN%2FAMuDAvMToA%2FYB781EtwXAMeCledgPAscwE19yBnr0AY8C98xH7lHgS7H8OZaAHuBl4JZ5yl8I7Ae%2BjQUAvAZszULmD67Yf%2B%2Bc%2FCXAn8DaLGT%2BYHqy6R6fS%2FRYwAnDuhwLwCDwI7AmA3kX3EbyWfQYiUWWANeR76uWvL70w6OAFfM9wEXzKMAi8AXwRC0CcBwYAnqzlreT9N6VpPdmIe%2BiW09scC0CfGceXmAncH8tAnAP6TqVpPcq8DkwYnBvOfD3HAXgA6An6WAtArAXWJXhXwIep7r%2BvxscH8pSAD6giDAsAnqAsQz%2FEHAHsC3pYAnwY8wEHEvI8AnwRNYCcBTpMkBvAsYcMrwLwOPU1v93A%2BsTcnwDlDu2Zf3%2FDyRk%2Bxo4YViX3RFgP7A6A3EXyJXTa9ulwF%2FAmgz9HyRk%2Bww4ZFiX%2FV3AzTF%2FK0uA74ANKfP252kdLwHvJeT%2FnoQY8Bh4xrIbXwIsA7YCnSl%2FXwA8CnyZ0vYxMJKQYwD560%2F%2BPInuI%2BByYL%2BhfWbSj8Vp%2F%2BL8O1GepzscI5Nez4H9wNfAp9R3gU%2BAX4G%2FAfsh0O0YAt4EbhwndpPhvVfK9OskfeVxuZ6eZ94692G6L7fC%2FOvclOmv9HjOsV8Z%2B61zb9PjscT4UuclY2T9NcoUqOfAn0gXn6T6tUeZfjKx987Enp6v3hLgnTkiQDp9pY2tC8BvSD7VqYfN45%2BT9FXvneQvC%2Bq7KDP6eM4CkN7G5fU6DzyRceymKAn9l6Ocl%2Bhreiz%2BlZfAEv13bAnp8fAcoWf3fTnHmS8u17kPlxMey60wv5uD802An9wUqO%2FAw6Q7X9z03jXg3oxjNyXpuxzX5WbA7%2BXgnAsI0%2F3S6Sutbe0bYAdp59Y6D7w36b13jWPLvU6Z%2Fidw%2B7jOqO%2FAG4ZlmToPnE6ZfvL%2By2NOfZdrwOPv4BwFCOntWb6u2v89w9ZpIAnwN063eYjucY%2BAW8bLofp2uXnc9g6OAsKkrXy76fWpI6SPhfT6Auk9O0gfeZfbe8dIezvclPoeZ%2FZP0R0Bvka2s%2Fzp8STwMfDDeG0v6%2F0fAzvHWbYn05MebZfbe7HwXWz9fyn9P%2F8fW%2BD%2BAn661uGbyGId%2FLyC%2F%2BA8%2FQE%2FWwvwC%2FgFfAL%2Bgf8X6f%2BDwP8E8AsICPkF%2FBfwnwH%2BgvAL8AtwMv4XwN0b8F8AtwD8AvAL%2BgXmF%2BAnMBPML8DJA%2FwM%2BAnMBPMLzI73A3AGeAjwM2gH8M%2F9A%2FQgR31nUAsDAAAAAElFTkSuQmCC","sizes":"64x64","type":"image/png"}]}'>
@@ -263,7 +261,44 @@ th, td {
 </div>
 
 <script>
-// BARU: Deklarasi variabel prices dipindahkan ke eksternal prices.js
+const prices = {
+"Trouser": {L:127000,W:135000,P:104000},
+"Shirt (Long Sleeve)": {L:127000,W:135000,P:104000},
+"Shirt (Short Sleeve)": {L:115000,W:116000,P:104000},
+"Sport Shirt": {L:105000,W:105000,P:93000},
+"Under pants": {L:64000},
+"Undershirt": {L:64000},
+"Necktie": {W:80000,P:70000},
+"Blouse": {L:127000,W:138000,P:93000},
+"Dress": {L:127000,W:200000,P:121000},
+"Skirt": {L:110000,W:150000,P:93000},
+"Slack": {L:127000,W:139000,P:104000},
+"Brassieres": {L:64000},
+"Panties": {L:64000},
+"Suit (2pcs)": {W:230000,P:195500},
+"Sweater": {L:110000,W:120000,P:93000},
+"Pyjamas (2pcs)": {L:93000,W:92000,P:75000},
+"T'Shirt": {L:93000,W:100000,P:85000},
+"Socks": {L:63000},
+"Shorts": {L:81000,W:80000,P:75000},
+"Jeans": {L:127000,W:138000,P:99000},
+"Jacket": {L:130000,W:145000,P:120000},
+"Handkerchief": {L:58000},
+"Scarf/Hijab/Apron/Hat": {L:60500,W:70000,P:55000},
+"Blanket/Bath Towel": {L:110000},
+"Sarung": {L:121000,W:130000,P:110000}
+"Open Hand Towel":{L:81000},
+"Open Bed Sheet":{L:110000},
+"Open Face Towel/Pillow Cases":{L:58000},
+"Open Mask/Cadar/Celemek":{L:58000},
+"Open Large Doll":{L:140000},
+"Open Medium Doll":{L:93000},
+"Open Small Doll":{L:63000},
+"Open Handband":{L:63000},
+"Open Vest":{L:110000,W:123000,P:93000},
+"Open Baby Bouncer":{L:81000},
+};
+
 let grandTotal = 0;
 let totalPieces = 0;
 let totalEntries = 0;
@@ -391,7 +426,7 @@ function updateTotal(){
   } else {
     discRow.style.display = 'none';
     netRow.style.display = 'none';
-    pCheckDiscPrint.style.display = 'none';
+    pCheckDiscPrint.style.display = 'none'; // Sembunyikan otomatis jika diskon 0%
   }
 
   document.getElementById('tax').innerText = Math.round(tax).toLocaleString('id-ID');
@@ -409,32 +444,28 @@ function printStruk(){
 function resetAll(){
   document.querySelector("#table tbody").innerHTML = '';
   document.getElementById('roomNo').value = '';
-  document.getElementById('checkDisc').selectedIndex = 0;
-  document.getElementById('itemDisc').selectedIndex = 0;
   document.getElementById('checkDisc').value = '0';
   document.getElementById('itemDisc').value = '0';
-  document.getElementById('p-checkdisc').style.display = 'none'; 
-  document.getElementById('p-checkdisc').innerText = ''; 
+  document.getElementById('p-checkdisc').style.display = 'none'; // Sembunyikan saat klik reset
   syncPrintText();
   grandTotal = 0;
   totalPieces = 0;
   totalEntries = 0;
   updateTotal();
 }
-  
+
 document.addEventListener("keydown", function(e){
   if(e.key === "Enter"){
     tambah();
   }
 });
 
-// BARU: Memasukkan file prices.js ke dalam sistem cache PWA agar bisa diakses offline
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     const swCode = `
       const CACHE_NAME = 'laundry-pos-v15';
       self.addEventListener('install', e => {
-        e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(['/', 'prices.js'])));
+        e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(['/'])));
       });
       self.addEventListener('fetch', e => {
         e.respondWith(caches.match(e.request).then(res => res || fetch(e.request)));
