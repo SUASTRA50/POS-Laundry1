@@ -12,7 +12,9 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
 <link rel="apple-touch-icon" href="icon-192.png">
-<link rel="apple-touch-icon" sizes="512x512" href="icon-512.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+
 <link rel="manifest" href="manifest.json">
 
 <style>
@@ -460,14 +462,14 @@ document.addEventListener("keydown", function(e){
   }
 });
 
-// PWA - FIXED
+// PWA Service Worker - proper file based
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('sw.js')
-      .then(reg => console.log('SW registered:', reg.scope))
-      .catch(err => console.log('SW failed:', err));
+      .then(reg => console.log('SW registered', reg.scope))
+      .catch(err => console.log('SW failed', err));
   });
 }
 </script>
 </body>
-</html>
+</html
